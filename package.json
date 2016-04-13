@@ -1,0 +1,22 @@
+{
+  "name": "airship-calculator",
+  "version": "1.0.0",
+  "description": "An airship specification calculator.",
+  "main": "gulpfile.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/sebinievas/airship-calculator.git"
+  },
+  "keywords": [
+    "calculator"
+  ],
+  "author": "Sebastian Nievas",
+  "license": "GPL-3.0",
+  "bugs": {
+    "url": "https://github.com/sebinievas/airship-calculator/issues"
+  },
+  "homepage": "https://github.com/sebinievas/airship-calculator#readme"
+}
