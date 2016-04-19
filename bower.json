@@ -1,0 +1,24 @@
+{
+  "name": "airship-calculator",
+  "description": "An airship specification calculator.",
+  "main": "./src/js/app.jsx",
+  "authors": [
+    "Sebastian Nievas"
+  ],
+  "license": "GPL-3.0",
+  "keywords": [
+    "calculator"
+  ],
+  "homepage": "https://github.com/sebinievas/airship-calculator",
+  "private": true,
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "bootstrap": "^3.3.6"
+  }
+}

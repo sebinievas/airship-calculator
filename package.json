@@ -18,5 +18,16 @@
   "bugs": {
     "url": "https://github.com/sebinievas/airship-calculator/issues"
   },
-  "homepage": "https://github.com/sebinievas/airship-calculator#readme"
+  "homepage": "https://github.com/sebinievas/airship-calculator#readme",
+  "dependencies": {
+    "browserify": "^13.0.0",
+    "gulp": "^3.9.1",
+    "gulp-react": "^3.1.0",
+    "gulp-sass": "^2.2.0",
+    "gulp-uglify": "^1.5.3",
+    "gulp-util": "^3.0.7",
+    "reactify": "^1.1.1",
+    "vinyl-source-stream": "^1.1.0",
+    "watchify": "^3.7.0"
+  }
 }
