@@ -8,17 +8,28 @@ var sass       = require('gulp-sass');
 
 
 gulp.task('bower', function() {
-  return gulp.src(['./bower_components/*'])
+  return gulp.src(['./bower_components/**/*'])
     .pipe(gulp.dest('./dist/vendors'));
 });
 
-gulp.task('styles', function() {
-  return gulp.src(['./src/sass/*.scss'])
+gulp.task('sass', function() {
+  return gulp.src('./src/sass/**/*.scss')
     .pipe(sass())
     .pipe(gulp.dest('./dist/css'));
 });
 
-gulp.task('default', ['styles'], function() {
+gulp.task('watch', function() {
+  gulp.watch(['./src/sass/**/*.scss'], ['sass']);
+  gulp.watch(['./src/*.html'], ['html']);
+});
+
+gulp.task('html', function() {
+  console.log('HTML updated')
+  return gulp.src('./src/*.html')
+    .pipe(gulp.dest('./dist'));
+});
+
+gulp.task('default', ['sass', 'bower', 'html', 'watch'], function() {
   var bundler = watchify(browserify({
     entries: ['./src/js/app.jsx'],
     transform: [reactify],
@@ -36,7 +47,7 @@ gulp.task('default', ['styles'], function() {
       .bundle()
       .on('error', gutil.log.bind(gutil, 'Browserify Error'))
       .pipe(source('main.js'))
-      .pipe(gulp.dest('./build/js'));
+      .pipe(gulp.dest('./dist/js'));
   }
 
   build();
