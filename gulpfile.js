@@ -5,10 +5,12 @@ var browserify = require('browserify');
 var watchify   = require('watchify');
 var reactify   = require('reactify');
 var sass       = require('gulp-sass');
+var tap        = require('gulp-tap');
+var pathinfo   = require('pathinfo');
 
 
 gulp.task('bower', function() {
-  return gulp.src(['./bower_components/**/*'])
+  return gulp.src(['./bower_components/*/dist/**/*'])
     .pipe(gulp.dest('./dist/vendors'));
 });
 
@@ -24,7 +26,6 @@ gulp.task('watch', function() {
 });
 
 gulp.task('html', function() {
-  console.log('HTML updated')
   return gulp.src('./src/*.html')
     .pipe(gulp.dest('./dist'));
 });
