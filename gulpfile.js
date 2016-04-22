@@ -4,9 +4,8 @@ var source     = require('vinyl-source-stream');
 var browserify = require('browserify');
 var watchify   = require('watchify');
 var reactify   = require('reactify');
+var uglify     = require('gulp-uglify');
 var sass       = require('gulp-sass');
-var tap        = require('gulp-tap');
-var pathinfo   = require('pathinfo');
 
 
 gulp.task('bower', function() {
@@ -20,17 +19,26 @@ gulp.task('sass', function() {
     .pipe(gulp.dest('./dist/css'));
 });
 
-gulp.task('watch', function() {
-  gulp.watch(['./src/sass/**/*.scss'], ['sass']);
-  gulp.watch(['./src/*.html'], ['html']);
-});
-
 gulp.task('html', function() {
   return gulp.src('./src/*.html')
     .pipe(gulp.dest('./dist'));
 });
 
-gulp.task('default', ['sass', 'bower', 'html', 'watch'], function() {
+
+gulp.task('watch', function() {
+  gulp.watch(['./src/sass/**/*.scss'], ['sass']);
+  gulp.watch(['./src/*.html'], ['html']);
+  gulp.watch(['./dist/js/main.js'], ['minify']);
+});
+
+
+gulp.task('minify', function() {
+  return gulp.src('./dist/main.js')
+    .pipe(uglify())
+    .pipe(gulp.dest('./dist/js/main.min.js'))
+});
+
+gulp.task('default', ['sass', 'bower', 'html', 'minify', 'watch'], function() {
   var bundler = watchify(browserify({
     entries: ['./src/js/app.jsx'],
     transform: [reactify],
@@ -45,6 +53,7 @@ gulp.task('default', ['sass', 'bower', 'html', 'watch'], function() {
     if (file) gutil.log('Recompiling ' + file);
 
     return bundler
+      .external(['react', 'react-dom'])
       .bundle()
       .on('error', gutil.log.bind(gutil, 'Browserify Error'))
       .pipe(source('main.js'))
