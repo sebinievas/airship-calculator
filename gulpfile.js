@@ -4,6 +4,7 @@ var source     = require('vinyl-source-stream');
 var browserify = require('browserify');
 var watchify   = require('watchify');
 var reactify   = require('reactify');
+var server     = require('gulp-server-livereload');
 var uglify     = require('gulp-uglify');
 var sass       = require('gulp-sass');
 
@@ -24,6 +25,11 @@ gulp.task('html', function() {
     .pipe(gulp.dest('./dist'));
 });
 
+gulp.task('minify', function() {
+  return gulp.src('./dist/main.js')
+    .pipe(uglify())
+    .pipe(gulp.dest('./dist/js/main.min.js'))
+});
 
 gulp.task('watch', function() {
   gulp.watch(['./src/sass/**/*.scss'], ['sass']);
@@ -31,35 +37,50 @@ gulp.task('watch', function() {
   gulp.watch(['./dist/js/main.js'], ['minify']);
 });
 
+var bundler = watchify(browserify({
+  entries: ['./src/js/app.jsx'],
+  transform: [reactify],
+  extensions: ['.jsx'],
+  debug: true,
+  cache: {},
+  packageCache: {},
+  fullPaths: true
+}));
 
-gulp.task('minify', function() {
-  return gulp.src('./dist/main.js')
-    .pipe(uglify())
-    .pipe(gulp.dest('./dist/js/main.min.js'))
+function bundle(file) {
+  if (file) gutil.log('Recompiling ' + file);
+
+  return bundler
+    // .external(['react', 'react-dom'])
+    .bundle()
+    .on('error', gutil.log.bind(gutil, 'Browserify Error'))
+    .pipe(source('main.js'))
+    .pipe(gulp.dest('./dist/js'));
+}
+
+bundler.on('update', bundle);
+
+gulp.task('build', function() {
+  bundle();
 });
 
-gulp.task('default', ['sass', 'bower', 'html', 'minify', 'watch'], function() {
-  var bundler = watchify(browserify({
-    entries: ['./src/js/app.jsx'],
-    transform: [reactify],
-    extensions: ['.jsx'],
-    debug: true,
-    cache: {},
-    packageCache: {},
-    fullPaths: true
-  }));
-
-  function build(file) {
-    if (file) gutil.log('Recompiling ' + file);
-
-    return bundler
-      .external(['react', 'react-dom'])
-      .bundle()
-      .on('error', gutil.log.bind(gutil, 'Browserify Error'))
-      .pipe(source('main.js'))
-      .pipe(gulp.dest('./dist/js'));
-  }
-
-  build();
-  bundler.on('update', build);
+gulp.task('serve', function(done) {
+  // define the web root (src)
+  gulp.src('dist')
+    .pipe(server({
+      livereload: {
+        enable: true,
+        filter: function(filePath, cb) {
+          if(/main.js/.test(filePath)) {
+            cb(true)
+          } else if(/style.css/.test(filePath)){
+            cb(true)
+          }
+        }
+      },
+      open: true
+    }));
 });
+
+
+gulp.task('default', ['build', 'serve', 'sass', 'bower', 'html', 'minify', 'watch']);
